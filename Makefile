@@ -207,6 +207,10 @@ clean-cache:
 #==============================================================================
 .PHONY: test
 test: ## デバッグ用です(※pytestは走りません)
-test:
-	@echo $(L_FC)
-	@echo $(L_FJ)
+test: $(D_TMP_VAN_NOR_CO)/elements/abilities.json $(D_TMP_VAN)/patch.json
+	@echo "1. 英語ファイルからJSONポインタを抜き出す" 1>&2
+	@echo "2. 日本語化ファイルから(1)の該当部分を抜き出す" 1>&2
+	@echo "3. 英語ファイルに(2)のパッチをあてる" 1>&2
+	$(D_SCR)/pointers_json.py $(D_TMP_VAN_NOR_CO)/elements/abilities.json \
+	| $(D_SCR)/patch_filtered_by_pointers.py $(D_TMP_VAN)/patch.json \
+	| jsonpatch -u --indent 4 tmp/vanilla_content/normalized/core/elements/abilities.json /dev/stdin
