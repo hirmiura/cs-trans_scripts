@@ -151,6 +151,13 @@ $(L_DI):
 		jq '.[] | select(.op == "replace" and (.path | test("(/drawmessages/|(label|comments|description|descriptionunlocked)$$)")))' $@ | jq -s > $(FNP) ; \
 	fi
 
+.PHONY: one-file-patch
+one-file-patch: ## パッチファイルを1つにまとめます
+one-file-patch: diff $(D_TMP_VAN)/$(D_PAT).json
+
+$(D_TMP_VAN)/$(D_PAT).json: $(L_DI)
+	@mkdir -p $(@D)
+	find $(D_TMP_VAN_PAT) -type f -size +3c -exec jq -s '.[][]' {} + | jq -s > $@
 
 #==============================================================================
 # お掃除
@@ -180,9 +187,12 @@ clean-diff: clean-patch
 
 .PHONY: clean-patch
 clean-patch: ## 差分ファイルを削除します
-clean-patch:
+clean-patch: clean-one-file-patch
 	rm -fr $(D_TMP_VAN_DIF)
 	rm -fr $(D_TMP_VAN_PAT)
+
+clean-one-file-patch:
+	rm -f $(D_TMP_VAN)/$(D_PAT).json
 
 .PHONY: clean-cache
 clean-cache: ## キャッシュファイルを削除します
