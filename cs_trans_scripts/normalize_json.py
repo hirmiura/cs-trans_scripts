@@ -13,6 +13,9 @@ import time
 
 ENC = "utf-8"
 
+ID = "id"
+SLOTS = "slots"
+
 
 def pargs():
     parser = argparse.ArgumentParser(description="IDでハッシュ化する")
@@ -53,10 +56,25 @@ def normalize(files: list) -> dict:
                 result[ty] = {}
             for item in li:
                 print(".", end="", file=sys.stderr, flush=True)
-                id = item["id"]
+                id = item[ID]
                 if id in result[ty]:
-                    print("  \a\x1b[93midの重複があります\x1b[0m", file=sys.stderr)
+                    print(f"\n  \a\x1b[93mid({id})の重複があります\x1b[0m", file=sys.stderr, flush=True)
                 result[ty][id] = item
+                # slots
+                if SLOTS in item and isinstance(item[SLOTS], list):
+                    newslots = {}
+                    for slotitem in item[SLOTS]:
+                        print(",", end="", file=sys.stderr, flush=True)
+                        slotid = slotitem[ID]
+                        if slotid in newslots:
+                            print(
+                                f"\n  \a\x1b[93mid({slotid})の重複があります\x1b[0m",
+                                file=sys.stderr,
+                                flush=True,
+                            )
+                        newslots[slotid] = slotitem
+                    result[ty][id][SLOTS] = newslots
+
         t_dlt = time.perf_counter() - t_sta
         print(f"\n  {t_dlt}秒", file=sys.stderr)
     json.dump(result, sys.stdout, ensure_ascii=False, indent=4)
@@ -76,6 +94,12 @@ def denormalize(files: list) -> dict:
                 result[ty] = []
             for item in dic.values():
                 print(".", end="", file=sys.stderr, flush=True)
+                if SLOTS in item:
+                    newslots = []
+                    for slotitem in item[SLOTS].values():
+                        print(",", end="", file=sys.stderr, flush=True)
+                        newslots.append(slotitem)
+                    item[SLOTS] = newslots
                 result[ty].append(item)
         t_dlt = time.perf_counter() - t_sta
         print(f"\n  {t_dlt}秒", file=sys.stderr)
