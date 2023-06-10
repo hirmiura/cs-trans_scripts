@@ -1,0 +1,34 @@
+{
+    "black-formatter.importStrategy": "fromEnvironment",
+    "black-formatter.interpreter": [
+        "${workspaceFolder}/.venv/bin/python"
+    ],
+    "black-formatter.path": [
+        "${workspaceFolder}/.venv/bin/black"
+    ],
+    "flake8.importStrategy": "fromEnvironment",
+    "flake8.interpreter": [
+        "${workspaceFolder}/.venv/bin/python"
+    ],
+    "flake8.path": [
+        "${workspaceFolder}/.venv/bin/flake8p"
+    ],
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "isort.importStrategy": "fromEnvironment",
+    "isort.interpreter": [
+        "${workspaceFolder}/.venv/bin/python"
+    ],
+    "isort.path": [
+        "${workspaceFolder}/.venv/bin/isort"
+    ],
+    "python.formatting.blackPath": "${workspaceFolder}/.venv/bin/black",
+    "python.formatting.provider": "black",
+    "python.linting.flake8Path": "${workspaceFolder}/.venv/bin/flake8p",
+    "python.linting.mypyPath": "${workspaceFolder}/.venv/bin/mypy",
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "python.testing.pytestPath": "${workspaceFolder}/.venv/bin/pytest",
+    "terminal.integrated.enableBell": true
+}
