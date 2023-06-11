@@ -24,6 +24,9 @@
     "isort.path": [
         "${workspaceFolder}/.venv/bin/isort"
     ],
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/.venv/lib64/python3.11/site-packages"
+    ],
     "python.formatting.blackPath": "${workspaceFolder}/.venv/bin/black",
     "python.formatting.provider": "black",
     "python.linting.flake8Path": "${workspaceFolder}/.venv/bin/flake8p",
