@@ -18,6 +18,7 @@ format_json                = "cs_trans_scripts.format_json:main"
 normalize_json             = "cs_trans_scripts.normalize_json:main"
 patch_filtered_by_pointers = "cs_trans_scripts.patch_filtered_by_pointers:main"
 pointers_json              = "cs_trans_scripts.pointers_json:main"
+trans_table                = "cs_trans_scripts.trans_table:main"
 
 
 [tool.poetry.dependencies]

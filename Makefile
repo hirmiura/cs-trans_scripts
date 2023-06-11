@@ -190,6 +190,14 @@ $(D_TMP_VAN)/$(D_PAT)_jp.json: $(L_DI_J)
 	find $(D_TMP_VAN_PAT_J) -type f -size +3c -exec jq -s '.[][]' {} + | jq -s > $@
 
 
+.PHONY: trans-table
+trans-table: ## 翻訳テーブルを作成します
+trans-table: $(D_TMP_VAN)/trans_table.json
+
+$(D_TMP_VAN)/trans_table.json: $(D_TMP_VAN)/$(D_PAT)_core.json $(D_TMP_VAN)/$(D_PAT)_jp.json
+	poetry run $(D_SCR)/trans_table.py $^ > $@
+
+
 #==============================================================================
 # お掃除
 #==============================================================================
@@ -226,6 +234,9 @@ clean-one-file-patch:
 	rm -f $(D_TMP_VAN)/$(D_PAT).json
 	rm -f $(D_TMP_VAN)/$(D_PAT)_core.json
 	rm -f $(D_TMP_VAN)/$(D_PAT)_jp.json
+
+clean-trans-table:
+	rm -f $(D_TMP_VAN)/trans_table.json
 
 .PHONY: clean-cache
 clean-cache: ## キャッシュファイルを削除します
