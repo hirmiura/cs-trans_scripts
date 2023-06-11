@@ -53,9 +53,15 @@ L_NJ := $(L_VJ:$(D_VAN)/%=$(D_TMP_VAN_NOR)/%)
 
 # 差分ファイル群
 D_TMP_VAN_DIF := $(D_TMP_VAN)/$(D_DIF)
+D_TMP_VAN_DIF_C := $(D_TMP_VAN_DIF)/$(D_CO)
+D_TMP_VAN_DIF_J := $(D_TMP_VAN_DIF)/$(D_JP)
 D_TMP_VAN_PAT := $(D_TMP_VAN)/$(D_PAT)
-L_DI := $(L_VC:$(D_VAN_C)/%=$(D_TMP_VAN_DIF)/%)
-L_PA := $(L_VC:$(D_VAN_C)/%=$(D_TMP_VAN_PAT)/%)
+D_TMP_VAN_PAT_C := $(D_TMP_VAN_PAT)/$(D_CO)
+D_TMP_VAN_PAT_J := $(D_TMP_VAN_PAT)/$(D_JP)
+L_DI_C := $(L_VC:$(D_VAN_C)/%=$(D_TMP_VAN_DIF_C)/%)
+L_DI_J := $(L_VC:$(D_VAN_C)/%=$(D_TMP_VAN_DIF_J)/%)
+L_PA_C := $(L_VC:$(D_VAN_C)/%=$(D_TMP_VAN_PAT_C)/%)
+L_PA_J := $(L_VC:$(D_VAN_C)/%=$(D_TMP_VAN_PAT_J)/%)
 
 
 #==============================================================================
@@ -136,28 +142,53 @@ $(L_NC) $(L_NJ):
 #==============================================================================
 .PHONY: diff
 diff: ## 差分を取ります
-diff: normalize $(L_DI)
+diff: diff-core diff-jp
 
-$(L_DI):
-	$(eval FNJ := $(@:$(D_TMP_VAN_DIF)/%=$(D_TMP_VAN_NOR_JP)/%))
-	$(eval FNC := $(@:$(D_TMP_VAN_DIF)/%=$(D_TMP_VAN_NOR_CO)/%))
-	$(eval FNP := $(@:$(D_TMP_VAN_DIF)/%=$(D_TMP_VAN_PAT)/%))
+.PHONY: diff-core
+diff-core: normalize $(L_DI_C)
+
+$(L_DI_C):
+	$(eval FNC := $(@:$(D_TMP_VAN_DIF_C)/%=$(D_TMP_VAN_NOR_CO)/%))
+	$(eval FNJ := $(@:$(D_TMP_VAN_DIF_C)/%=$(D_TMP_VAN_NOR_JP)/%))
+	$(eval FNP := $(@:$(D_TMP_VAN_DIF_C)/%=$(D_TMP_VAN_PAT_C)/%))
 	@if [ -f $(FNJ) ] ; then \
 		mkdir -p $(@D) ; \
 		echo -e "\x1b[32mJSONdiffing\x1b[0m $(FNJ) $(FNC) > $@" ; \
+		poetry run jsondiff --indent 4 $(FNJ) $(FNC) > $@ ; \
+		mkdir -p $(dir $(FNP)) ; \
+		echo -e "\x1b[32mJQing\x1b[0m $@ > $(FNP)" ; \
+		jq '.[] | select(.op == "replace" and (.path | test("(/drawmessages/|(label|comments|description|descriptionunlocked)$$)")))' $@ | jq -s > $(FNP) ; \
+	fi
+
+.PHONY: diff-jp
+diff-jp: normalize $(L_DI_J)
+
+$(L_DI_J):
+	$(eval FNC := $(@:$(D_TMP_VAN_DIF_J)/%=$(D_TMP_VAN_NOR_CO)/%))
+	$(eval FNJ := $(@:$(D_TMP_VAN_DIF_J)/%=$(D_TMP_VAN_NOR_JP)/%))
+	$(eval FNP := $(@:$(D_TMP_VAN_DIF_J)/%=$(D_TMP_VAN_PAT_J)/%))
+	@if [ -f $(FNJ) ] ; then \
+		mkdir -p $(@D) ; \
+		echo -e "\x1b[32mJSONdiffing\x1b[0m $(FNC) $(FNJ) > $@" ; \
 		poetry run jsondiff --indent 4 $(FNC) $(FNJ) > $@ ; \
 		mkdir -p $(dir $(FNP)) ; \
 		echo -e "\x1b[32mJQing\x1b[0m $@ > $(FNP)" ; \
 		jq '.[] | select(.op == "replace" and (.path | test("(/drawmessages/|(label|comments|description|descriptionunlocked)$$)")))' $@ | jq -s > $(FNP) ; \
 	fi
 
+
 .PHONY: one-file-patch
 one-file-patch: ## パッチファイルを1つにまとめます
-one-file-patch: diff $(D_TMP_VAN)/$(D_PAT).json
+one-file-patch: diff $(D_TMP_VAN)/$(D_PAT)_core.json $(D_TMP_VAN)/$(D_PAT)_jp.json
 
-$(D_TMP_VAN)/$(D_PAT).json: $(L_DI)
+$(D_TMP_VAN)/$(D_PAT)_core.json: $(L_DI_C)
 	@mkdir -p $(@D)
-	find $(D_TMP_VAN_PAT) -type f -size +3c -exec jq -s '.[][]' {} + | jq -s > $@
+	find $(D_TMP_VAN_PAT_C) -type f -size +3c -exec jq -s '.[][]' {} + | jq -s > $@
+
+$(D_TMP_VAN)/$(D_PAT)_jp.json: $(L_DI_J)
+	@mkdir -p $(@D)
+	find $(D_TMP_VAN_PAT_J) -type f -size +3c -exec jq -s '.[][]' {} + | jq -s > $@
+
 
 #==============================================================================
 # お掃除
@@ -193,6 +224,8 @@ clean-patch: clean-one-file-patch
 
 clean-one-file-patch:
 	rm -f $(D_TMP_VAN)/$(D_PAT).json
+	rm -f $(D_TMP_VAN)/$(D_PAT)_core.json
+	rm -f $(D_TMP_VAN)/$(D_PAT)_jp.json
 
 .PHONY: clean-cache
 clean-cache: ## キャッシュファイルを削除します
