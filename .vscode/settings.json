@@ -33,5 +33,8 @@
     "python.linting.mypyPath": "${workspaceFolder}/.venv/bin/mypy",
     "python.terminal.activateEnvInCurrentTerminal": true,
     "python.testing.pytestPath": "${workspaceFolder}/.venv/bin/pytest",
-    "terminal.integrated.enableBell": true
+    "terminal.integrated.enableBell": true,
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "${workspaceFolder}"
+    }
 }
