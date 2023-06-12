@@ -22,6 +22,7 @@ def replace(doc, table: ReplaceTable, ptr_filter="^(?!(.*/)?id$)") -> None:
     for k, v in table.items():
         ptrs = search_json.search(doc, k, ptr_filter)
         for p in ptrs:
+            print("+", end="", file=sys.stderr, flush=True)
             p.set(doc, v[0])
 
 
