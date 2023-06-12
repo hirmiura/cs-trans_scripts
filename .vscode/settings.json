@@ -25,7 +25,7 @@
         "${workspaceFolder}/.venv/bin/isort"
     ],
     "python.analysis.extraPaths": [
-        "${workspaceFolder}/.venv/lib64/python3.11/site-packages"
+        "${workspaceFolder}/.venv/lib/python3.11/site-packages"
     ],
     "python.formatting.blackPath": "${workspaceFolder}/.venv/bin/black",
     "python.formatting.provider": "black",
