@@ -21,16 +21,17 @@ Ptr: TypeAlias = list[str]
 
 def search(doc, value, ptr_filter="") -> list[JsonPointer]:
     ptr: Ptr = [""]
-    result = _search(doc, value, ptr_filter, ptr)
+    cmp_filter = re.compile(ptr_filter) if ptr_filter else None
+    result = _search(doc, value, cmp_filter, ptr)
     return result
 
 
-def _search(doc, value, ptr_filter, curPtr: Ptr) -> list[JsonPointer]:
+def _search(doc, value, cmp_ptr_filter, curPtr: Ptr) -> list[JsonPointer]:
     result = []
     doSearch = True
     strptr = ptr_to_str(curPtr)
-    if ptr_filter:
-        if not re.search(ptr_filter, strptr):
+    if cmp_ptr_filter:
+        if not cmp_ptr_filter.search(strptr):
             doSearch = False
     if doSearch and doc == value:
         result.append(JsonPointer(strptr))
@@ -40,11 +41,11 @@ def _search(doc, value, ptr_filter, curPtr: Ptr) -> list[JsonPointer]:
             pass
         case Sequence():
             for num, subDoc in enumerate(doc):
-                subResult = _search(subDoc, value, ptr_filter, curPtr + [str(num)])
+                subResult = _search(subDoc, value, cmp_ptr_filter, curPtr + [str(num)])
                 result.extend(subResult)
         case Mapping():
             for key, subDoc in doc.items():
-                subResult = _search(subDoc, value, ptr_filter, curPtr + [str(key)])
+                subResult = _search(subDoc, value, cmp_ptr_filter, curPtr + [str(key)])
                 result.extend(subResult)
 
     return result
