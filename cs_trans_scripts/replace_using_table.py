@@ -11,7 +11,7 @@ import json
 import sys
 from typing import TypeAlias
 
-import search_json
+from cs_trans_scripts import search_json
 
 ENC = "utf-8-sig"
 
