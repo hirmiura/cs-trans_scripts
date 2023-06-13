@@ -18,7 +18,7 @@ import dirtyjson
 ENC_F = "utf-8-sig"
 
 KEY_ID = "id"
-TARGET_KEYS = [  # JSONPath '$..* where ([*] where id)'
+TARGET_KEYS = [
     "achievements",
     # "alt",
     "arriving",
@@ -49,8 +49,8 @@ TARGET_KEYS = [  # JSONPath '$..* where ([*] where id)'
     "recipes",
     "rkx.promote",
     "settings",
-    "slot",
     "slots",
+    "spec",
     "striking.foe",
     "striking.foe.weapon",
     "striking.underling",
