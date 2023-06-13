@@ -128,13 +128,13 @@ $(L_FC) $(L_FJ):
 #==============================================================================
 .PHONY: normalize
 normalize: ## JSONデータを正規化します
-normalize: format $(L_NC) $(L_NJ)
+normalize: $(L_NC) $(L_NJ)
 
 $(L_NC) $(L_NJ):
-	$(eval FN := $(@:$(D_TMP_VAN_NOR)/%=$(D_TMP_VAN_FMT)/%))
+	$(eval FN := $(@:$(D_TMP_VAN_NOR)/%=$(D_VAN)/%))
 	@mkdir -p $(@D)
 	@echo -e "\x1b[32mNormalizing\x1b[0m $(FN) > $@"
-	@poetry run $(D_SCR)/normalize_json.py $(FN) > $@
+	@poetry run $(D_SCR)/normalize_cs_json.py $(FN) > $@
 
 
 #==============================================================================
