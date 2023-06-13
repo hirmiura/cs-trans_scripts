@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cs-trans-scripts"
-version = "0.1.4"
+version = "0.1.5"
 description = "Cultist Simulatorの翻訳支援スクリプト"
 authors = [ "Hiroshi Miura <hirmiura@gmail.com>" ]
 license = "MIT"
@@ -15,6 +15,7 @@ classifiers = [
 
 [tool.poetry.scripts]
 format_json                = "cs_trans_scripts.format_json:main"
+normalize_cs_json          = "cs_trans_scripts.normalize_cs_json:main"
 normalize_json             = "cs_trans_scripts.normalize_json:main"
 patch_filtered_by_pointers = "cs_trans_scripts.patch_filtered_by_pointers:main"
 pointers_json              = "cs_trans_scripts.pointers_json:main"
