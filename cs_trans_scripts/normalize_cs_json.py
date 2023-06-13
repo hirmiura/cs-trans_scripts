@@ -18,20 +18,45 @@ import dirtyjson
 ENC_F = "utf-8-sig"
 
 KEY_ID = "id"
-TARGET_KEYS = [
+TARGET_KEYS = [  # JSONPath '$..* where ([*] where id)'
     "achievements",
+    # "alt",
+    "arriving",
+    "betrayal",
+    "consequences",
     "cultures",
     "decks",
     "dicta",
     "elements",
     "endings",
+    "epiphany",
+    "epiphany.colonel",
+    "epiphany.lionsmith",
+    "failure",
+    "fatiguing",
+    "induces",
+    "inductions",
+    "killmortal",
     "legacies",
     "legcies",
     "levers",
+    # "linked",
+    "mortal.introduce",
+    "opx.progress0",
+    "opx.progress1",
+    "opx.progress2",
     "portals",
     "recipes",
+    "rkx.promote",
     "settings",
+    "slot",
     "slots",
+    "striking.foe",
+    "striking.foe.weapon",
+    "striking.underling",
+    "striking.underling.weapon",
+    "success",
+    "upgrade.exile.ally",
     "verbs",
 ]
 
@@ -119,9 +144,9 @@ def normalize(jobj, _parent_key=None) -> Any:
                 result[k] = normalize(v, k)
         case Sequence() if not isinstance(jobj, str):
             if match_target_keys(_parent_key):
-                result = {}
-                for v in jobj:
-                    if KEY_ID in v:
+                if len(jobj) > 0 and KEY_ID in jobj[0]:
+                    result = {}
+                    for v in jobj:
                         id = v[KEY_ID]
                         if id in result:
                             print(
@@ -131,8 +156,16 @@ def normalize(jobj, _parent_key=None) -> Any:
                             )
                         progress(f"{CC_MATCH}+{CC_RESET}")
                         result[id] = normalize(v)
-                    else:
-                        raise AttributeError(f"{KEY_ID}が見つかりません")
+                else:
+                    result = []
+                    print(
+                        f"{CC_WARN}{_parent_key}/{KEY_ID}が見つかりません{CC_RESET}",
+                        file=sys.stderr,
+                        flush=True,
+                    )
+                    for v in jobj:
+                        progress("-")
+                        result.append(normalize(v))
             else:
                 result = []
                 for v in jobj:
