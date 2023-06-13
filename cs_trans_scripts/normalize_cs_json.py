@@ -183,7 +183,7 @@ def denormalize(jobj) -> Any:
         case Mapping():
             result = {}
             for k, v in jobj.items():
-                if match_target_keys(k):
+                if match_target_keys(k) and isinstance(v, dict):
                     result[k] = []
                     for vv in v.values():
                         progress(f"{CC_MATCH}-{CC_RESET}")
