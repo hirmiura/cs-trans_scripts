@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cs-trans-scripts"
-version = "0.1.5"
+version = "0.1.6"
 description = "Cultist Simulatorの翻訳支援スクリプト"
 authors = [ "Hiroshi Miura <hirmiura@gmail.com>" ]
 license = "MIT"
