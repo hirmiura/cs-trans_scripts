@@ -50,7 +50,6 @@ TARGET_KEYS = [
     "rkx.promote",
     "settings",
     "slots",
-    "spec",
     "striking.foe",
     "striking.foe.weapon",
     "striking.underling",
@@ -144,7 +143,7 @@ def normalize(jobj, _parent_key=None) -> Any:
                 result[k] = normalize(v, k)
         case Sequence() if not isinstance(jobj, str):
             if match_target_keys(_parent_key):
-                if len(jobj) > 0 and KEY_ID in jobj[0]:
+                if len(jobj) > 0 and isinstance(jobj[0], dict) and KEY_ID in jobj[0]:
                     result = {}
                     for v in jobj:
                         id = v[KEY_ID]
